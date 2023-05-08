@@ -1,0 +1,37 @@
+{
+  "databases": [
+    {
+      "database": "sqlite"
+    },
+    {
+      "database": "mysql",
+      "settings": {
+        "host": "localhost",
+        "port": 3306,
+        "username": "user",
+        "password": "password",
+        "databasename": "migupdater"
+      }
+    },
+    {
+      "database": "postgresql",
+      "settings": {
+        "host": "localhost",
+        "port": 5432,
+        "username": "user",
+        "password": "password",
+        "databasename": "migupdater"
+      }
+    },
+    {
+      "database": "mssql",
+      "settings": {
+        "host": "localhost",
+        "port": 1433,
+        "username": "user",
+        "password": "password",
+        "databasename": "migUpdater"
+      }
+    }
+  ]
+}

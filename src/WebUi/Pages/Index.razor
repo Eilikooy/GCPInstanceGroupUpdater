@@ -1,0 +1,66 @@
+﻿@page "/"
+
+@inject ItemsService _itemsService
+@inject IDialogService DialogService
+
+<PageTitle>Index</PageTitle>
+
+<h1>Settings</h1>
+
+<MudDataGrid T="TemplateUpdate" Items="@items" ReadOnly="false" EditMode="DataGridEditMode.Cell"
+             StartedEditingItem="@StartedEditingItem"
+             CanceledEditingItem="CanceledEditingItem"
+             CommittedItemChanges="CommittedItemChanges">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Items</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true" AdornmentIcon="@Icons.Material.Filled.Search"></MudTextField>
+    </ToolBarContent>
+    <Columns>
+        <PropertyColumn Property="x => x.Id" Title="Id" />
+        <PropertyColumn Property="x => x.FriendlyName" Title="Friendly Name" />
+        <PropertyColumn Property="x => x.Project" Title="Project" />
+        <PropertyColumn Property="x => x.Region" Title="Region" />
+        <PropertyColumn Property="x => x.Zone" Title="Zone" />
+        <PropertyColumn Property="x => x.TemplateInstanceName" Title="Template Instance Name" />
+        <PropertyColumn Property="x => x.ImagePrefix" Title="Image Prefix" />
+        <PropertyColumn Property="x => x.SourceTemplateName" Title="Source Template Name" />
+        <PropertyColumn Property="x => x.TemplatePrefix" Title="Template Prefix" />
+        <PropertyColumn Property="x => x.InstanceGroupName" Title="Instance Group Name" />
+        <PropertyColumn Property="x => x.TemplateImageFamily" Title="Template Image Family" />
+        <PropertyColumn Property="x => x.SshCommand" Title="Ssh command" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private List<TemplateUpdate> items = new List<TemplateUpdate>();
+    private string _searchString = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await foreach (var i in _itemsService.GetAllItemsAsync())
+        {
+            items.Add(i);
+        }
+        StateHasChanged();
+    }
+    void StartedEditingItem(TemplateUpdate item)
+    {
+
+    }
+
+    async void CanceledEditingItem(TemplateUpdate item)
+    {
+        await foreach (var i in _itemsService.GetAllItemsAsync())
+        {
+            items.Add(i);
+        }
+        StateHasChanged();
+    }
+
+    async void CommittedItemChanges(TemplateUpdate item)
+    {
+        await _itemsService.UpdateItemAsync(item);
+        StateHasChanged();
+    }
+}

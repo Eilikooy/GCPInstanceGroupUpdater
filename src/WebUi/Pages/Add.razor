@@ -1,0 +1,43 @@
+﻿@page "/add"
+@inject ItemsService _itemsService
+
+<h3>Add new</h3>
+<div class="Form">
+<MudPaper MaxWidth="840px">
+    <MudForm @ref="form" @bind-IsValid="@success" Model="templateUpdate" ReadOnly="false">
+        <MudTextField T="string" Required="true" @bind-Value="templateUpdate.FriendlyName" Label="Friendly Name" RequiredError="Friendly name is required!" />
+        <MudTextField T="string" Required="true" @bind-Value="templateUpdate.Project" Label="Project" RequiredError="Project is required!" />
+        <MudTextField T="string" Required="true" @bind-Value="templateUpdate.Region" Label="Region" RequiredError="Region is required!" />
+        <MudTextField T="string" Required="true" @bind-Value="templateUpdate.Zone" Label="Zone" RequiredError="Zone is required!" />
+        <MudTextField T="string" Required="true" @bind-Value="templateUpdate.TemplateInstanceName" Label="Template Instance Name" RequiredError="Template instance is required!" />
+        <MudTextField T="string" Required="true" @bind-Value="templateUpdate.ImagePrefix" Label="Image Prefix" RequiredError="Image prefix is required!" />
+        <MudTextField T="string" Required="true" @bind-Value="templateUpdate.SourceTemplateName" Label="Source Template Name" RequiredError="Source Template is required!" />
+        <MudTextField T="string" Required="true" @bind-Value="templateUpdate.TemplatePrefix" Label="Template Prefix" RequiredError="Template Prefix is required!" />
+        <MudTextField T="string" Required="true" @bind-Value="templateUpdate.InstanceGroupName" Label="Instance Group Name" RequiredError="Instance Group Name is required!" />
+        <MudTextField T="string" Required="true" @bind-Value="templateUpdate.TemplateImageFamily" Label="Template Image Family" RequiredError="Template Image Family is required!" />
+        <MudTextField T="string" Required="true" @bind-Value="templateUpdate.SshCommand" Label="SSH Command" RequiredError="SSH command is required!" />
+        <MudSpacer />
+        <div class="SubmitForm">
+            <MudButton OnClick="AddNew" ButtonType="ButtonType.Submit" StartIcon="@Icons.Material.TwoTone.Add">Submit</MudButton>
+        </div>
+    </MudForm>
+</MudPaper>
+</div>
+@code {
+    MudForm? form;
+    bool success;
+    TemplateUpdate templateUpdate = new TemplateUpdate();
+
+    protected override Task OnInitializedAsync()
+    {
+        return base.OnInitializedAsync();
+    }
+
+    async Task AddNew()
+    {
+        if (success)
+        {
+            await _itemsService.AddItemAsync(templateUpdate);
+        }
+    }
+}
