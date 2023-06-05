@@ -20,6 +20,7 @@ namespace SharedLib
                     var sshStream = sshClient.CreateShellStream("", 80, 40, 640, 400, 1024);
                     if (sshClient.IsConnected)
                     {
+                        _logger.LogInformation("Executing command:\n{0}", command);
                         sshStream.WriteLine(command);
                         if (sshStream.DataAvailable)
                         {
@@ -49,6 +50,7 @@ namespace SharedLib
                     sshClient.Connect();
                     if (sshClient.IsConnected)
                     {
+                        _logger.LogInformation("Executing command:\n{0}", command);
                         _logger.LogInformation("SSH command output:\n{0}", sshClient.CreateCommand(command).Execute());
                         sshClient.Disconnect();
                     }
@@ -85,6 +87,7 @@ namespace SharedLib
                         var sshStream = sshClient.CreateShellStream("", 80, 40, 640, 400, 1024);
                         if (sshClient.IsConnected)
                         {
+                            _logger.LogInformation("Executing command:\n{0}", command);
                             sshStream.WriteLine(command);
                             if (sshStream.DataAvailable)
                             {
@@ -131,6 +134,7 @@ namespace SharedLib
                         sshClient.Connect();
                         if (sshClient.IsConnected)
                         {
+                            _logger.LogInformation("Executing command:\n{0}", command);
                             _logger.LogInformation("SSH command output:\n{0}", sshClient.CreateCommand(command).Execute());
                             sshClient.Disconnect();
                         }

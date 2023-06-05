@@ -16,6 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\SharedLib\SharedLib.csproj" />
+    <ProjectReference Include="..\SharedLib\SharedLib.csproj" />
   </ItemGroup>
 </Project>
