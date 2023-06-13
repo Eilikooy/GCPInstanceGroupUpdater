@@ -46,34 +46,19 @@ namespace SharedLib
                 _commandExecutor.SshExecutePubKeyAuth(instanceDetails.NetworkInterfaces.First().AccessConfigs.First().NatIP, 
                     username, 
                     sshKeyPath, 
-                    settings.SshCommand);
+                    settings.SshCommand,
+                    autoContinue: autoContinue
+                    );
             }
             else
             {
                 _commandExecutor.SshExecutePubKeyAuth(instanceDetails.NetworkInterfaces.First().NetworkIP, 
                     username, 
                     sshKeyPath,
-                    settings.SshCommand);
+                    settings.SshCommand,
+                    autoContinue: autoContinue);
             }
-            if (!autoContinue)
-            {
-                Console.WriteLine("\nContinue? (y/n)");
-                string? keyPress = Console.ReadLine();
 
-                if (keyPress != null)
-                {
-                    switch (keyPress)
-                    {
-                        case "y":
-                            break;
-                        case "Y":
-                            break;
-                        default:
-                            Environment.Exit(1);
-                            break;
-                    }
-                }
-            }
             await _compute.StopVm(settings.Project, settings.Zone, settings.TemplateInstanceName);
 
             while (_compute.GetVmStatus(settings.Project, settings.Zone, settings.TemplateInstanceName) != "TERMINATED")

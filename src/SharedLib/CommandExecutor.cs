@@ -61,7 +61,7 @@ namespace SharedLib
                 throw;
             }
         }
-        public void SshExecutePubKeyAuth(string hostAddress, string username, string keyPath, string command, string keyPassword = "")
+        public void SshExecutePubKeyAuth(string hostAddress, string username, string keyPath, string command, bool autoContinue, string keyPassword = "")
         {
             try
             {
@@ -87,20 +87,39 @@ namespace SharedLib
                         var sshStream = sshClient.CreateShellStream("", 80, 40, 640, 400, 1024);
                         if (sshClient.IsConnected)
                         {
-                            _logger.LogInformation("Executing command:\n{0}", command);
+                            _logger.LogInformation("Executing command: {0}", command);
                             sshStream.WriteLine(command);
                             if (sshStream.DataAvailable)
                             {
                                 string line;
-                                while ((line = sshStream.ReadLine(TimeSpan.FromSeconds(2))) != null)
+                                while ((line = sshStream.ReadLine(TimeSpan.FromMinutes(1))) != null)
                                 {
                                     //_logger.LogInformation(line);
                                     Console.WriteLine(line);
                                 }
                             }
+                            if (!autoContinue)
+                            {
+                                Console.WriteLine("\nContinue? (y/n)");
+                                string? keyPress = Console.ReadLine();
+
+                                if (keyPress != null)
+                                {
+                                    switch (keyPress)
+                                    {
+                                        case "y":
+                                            break;
+                                        case "Y":
+                                            break;
+                                        default:
+                                            Environment.Exit(1);
+                                            break;
+                                    }
+                                }
+                            }
                             sshStream.Close();
-                            sshClient.Disconnect();
                         }
+                        sshClient.Disconnect();
                     }
                 }
             }
@@ -151,7 +170,7 @@ namespace SharedLib
     {
         public void SshExecutePasswordAuth(string hostAddress, string username, string password, string command);
         public void SshExecutePasswordAuthWithoutShell(string hostAddress, string username, string password, string command);
-        public void SshExecutePubKeyAuth(string hostAddress, string username, string keyPath, string command, string keyPassword = "");
+        public void SshExecutePubKeyAuth(string hostAddress, string username, string keyPath, string command, bool autoContinue, string keyPassword = "");
         public void SshExecutePubKeyAuthWithoutShell(string hostAddress, string username, string keyPath, string command, string keyPassword = "");
     }
 }
