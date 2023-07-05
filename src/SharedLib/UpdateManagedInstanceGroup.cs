@@ -43,7 +43,7 @@ namespace SharedLib
             var instanceDetails = await _compute.GetVmDetails(settings.Project, settings.Zone, settings.TemplateInstanceName);
             if (instanceDetails.NetworkInterfaces.First().AccessConfigs.Any())
             {
-                _commandExecutor.SshExecutePubKeyAuth(instanceDetails.NetworkInterfaces.First().AccessConfigs.First().NatIP, 
+                _commandExecutor.SshExecutePubKeyAuthWithoutShell(instanceDetails.NetworkInterfaces.First().AccessConfigs.First().NatIP, 
                     username, 
                     sshKeyPath, 
                     settings.SshCommand,
@@ -52,7 +52,7 @@ namespace SharedLib
             }
             else
             {
-                _commandExecutor.SshExecutePubKeyAuth(instanceDetails.NetworkInterfaces.First().NetworkIP, 
+                _commandExecutor.SshExecutePubKeyAuthWithoutShell(instanceDetails.NetworkInterfaces.First().NetworkIP, 
                     username, 
                     sshKeyPath,
                     settings.SshCommand,

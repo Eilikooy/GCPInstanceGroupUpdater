@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Renci.SshNet;
+using System.Security.Cryptography;
 
 namespace SharedLib
 {
@@ -80,46 +81,70 @@ namespace SharedLib
                     {
                         keyFile = new PrivateKeyFile(keyPath);
                     }
+                    var sshTask = Task.Run(() => {
 
-                    using (SshClient sshClient = new SshClient(new PrivateKeyConnectionInfo(hostAddress, username, keyFile)))
-                    {
-                        sshClient.Connect();
-                        var sshStream = sshClient.CreateShellStream("", 80, 40, 640, 400, 1024);
-                        if (sshClient.IsConnected)
+                        using (SshClient sshClient = new SshClient(new PrivateKeyConnectionInfo(hostAddress, username, keyFile)))
                         {
-                            _logger.LogInformation("Executing command: {0}", command);
-                            sshStream.WriteLine(command);
-                            if (sshStream.DataAvailable)
+                            sshClient.Connect();
+                            var sshStream = sshClient.CreateShellStream("", 80, 40, 640, 400, 1024);
+                            if (sshClient.IsConnected)
                             {
-                                string line;
-                                while ((line = sshStream.ReadLine(TimeSpan.FromMinutes(1))) != null)
-                                {
-                                    //_logger.LogInformation(line);
-                                    Console.WriteLine(line);
-                                }
-                            }
-                            if (!autoContinue)
-                            {
-                                Console.WriteLine("\nContinue? (y/n)");
-                                string? keyPress = Console.ReadLine();
+                                sshStream.WriteLine(command);
 
-                                if (keyPress != null)
+                                //var read = sshStream.ReadAsync(1024)
+                                bool commandStillRunning = true;
+                                while (sshStream.DataAvailable || commandStillRunning)
                                 {
-                                    switch (keyPress)
+                                    string line;
+                                    while ((line = sshStream.ReadLine(TimeSpan.FromMinutes(1))) != null)
                                     {
-                                        case "y":
-                                            break;
-                                        case "Y":
-                                            break;
-                                        default:
-                                            Environment.Exit(1);
-                                            break;
+                                        //_logger.LogInformation(line);
+                                        Console.WriteLine(line);
+                                    }
+                                    if (commandStillRunning)
+                                    {
+                                        Console.WriteLine("\nCommand still running? (y/n)");
+                                        string? keyPress = Console.ReadLine();
+                                        if (keyPress != null)
+                                        {
+                                            switch (keyPress)
+                                            {
+                                                case "y":
+                                                    continue;
+                                                case "Y":
+                                                    continue;
+                                                default:
+                                                    commandStillRunning = false;
+                                                    break;
+                                            }
+                                        }
                                     }
                                 }
+                                sshStream.Close();
                             }
-                            sshStream.Close();
+                            sshClient.Disconnect();
                         }
-                        sshClient.Disconnect();
+
+                    });
+                    sshTask.Wait();
+                    if (!autoContinue)
+                    {
+                        Console.WriteLine("\nContinue? (y/n)");
+                        string? keyPress = Console.ReadLine();
+
+                        if (keyPress != null)
+                        {
+                            switch (keyPress)
+                            {
+                                case "y":
+                                    break;
+                                case "Y":
+                                    break;
+                                default:
+                                    Environment.Exit(1);
+                                    break;
+                            }
+                        }
                     }
                 }
             }
@@ -128,7 +153,7 @@ namespace SharedLib
                 throw;
             }
         }
-        public void SshExecutePubKeyAuthWithoutShell(string hostAddress, string username, string keyPath, string command, string keyPassword = "")
+        public void SshExecutePubKeyAuthWithoutShell(string hostAddress, string username, string keyPath, string command, bool autoContinue, string keyPassword = "")
         {
             try
             {
@@ -154,8 +179,36 @@ namespace SharedLib
                         if (sshClient.IsConnected)
                         {
                             _logger.LogInformation("Executing command:\n{0}", command);
-                            _logger.LogInformation("SSH command output:\n{0}", sshClient.CreateCommand(command).Execute());
+
+                            var sshCommand = sshClient.CreateCommand(command);
+
+                            var async = sshCommand.BeginExecute();
+
+                            while (!async.IsCompleted)
+                            {
+                                Thread.Sleep(TimeSpan.FromSeconds(10));
+                            }
+                            _logger.LogInformation("SSH command output:\n{0}",sshCommand.EndExecute(async));
                             sshClient.Disconnect();
+                            if (!autoContinue)
+                            {
+                                Console.WriteLine("\nContinue? (y/n)");
+                                string? keyPress = Console.ReadLine();
+
+                                if (keyPress != null)
+                                {
+                                    switch (keyPress)
+                                    {
+                                        case "y":
+                                            break;
+                                        case "Y":
+                                            break;
+                                        default:
+                                            Environment.Exit(1);
+                                            break;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -171,6 +224,6 @@ namespace SharedLib
         public void SshExecutePasswordAuth(string hostAddress, string username, string password, string command);
         public void SshExecutePasswordAuthWithoutShell(string hostAddress, string username, string password, string command);
         public void SshExecutePubKeyAuth(string hostAddress, string username, string keyPath, string command, bool autoContinue, string keyPassword = "");
-        public void SshExecutePubKeyAuthWithoutShell(string hostAddress, string username, string keyPath, string command, string keyPassword = "");
+        public void SshExecutePubKeyAuthWithoutShell(string hostAddress, string username, string keyPath, string command, bool autoContinue, string keyPassword = "");
     }
 }
