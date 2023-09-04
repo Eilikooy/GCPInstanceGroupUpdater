@@ -32,11 +32,15 @@ static void RunOptions(CommandLineArguments opts)
     var serviceCollection = new ServiceCollection();
     ConfigureServices(serviceCollection);
     var serviceProvider = serviceCollection.BuildServiceProvider();
+
+    //serviceProvider.GetRequiredService<IAuthentication>().Oauth2Authentication().Wait();
+    
     serviceProvider.GetRequiredService<IUpdateManagedInstanceGroup>().ExecuteAsync(
         opts.FriendlyName, 
         opts.SshUsername, 
         opts.SshKeyFile, 
         opts.AutoContinue).Wait();
+    
 }
 static void HandleParseError(IEnumerable<Error> errs)
 {

@@ -26,6 +26,7 @@ namespace SharedLib
             services.AddScoped<ICompute, Compute>();
             services.AddTransient<IDbActions, DbActions>();
             services.AddScoped<IUpdateManagedInstanceGroup, UpdateManagedInstanceGroup>();
+            services.AddTransient<IIAP, IAP>();
 
             ConfigurationReader configurationReader = new();
             
