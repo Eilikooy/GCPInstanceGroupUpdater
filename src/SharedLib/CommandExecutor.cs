@@ -68,7 +68,8 @@ namespace SharedLib
             {
                 if (!File.Exists(keyPath))
                 {
-                    _logger.LogError("Key file not found");
+                    _logger.LogError("Key file not found. Tried looking it from: {0}", keyPath);
+                    Environment.Exit(1);
                 }
                 else
                 {
@@ -159,7 +160,8 @@ namespace SharedLib
             {
                 if (!File.Exists(keyPath))
                 {
-                    _logger.LogError("Key file not found");
+                    _logger.LogError("Key file not found. Tried looking it from: {0}", keyPath);
+                    Environment.Exit(1);
                 }
                 else
                 {
@@ -181,14 +183,13 @@ namespace SharedLib
                             _logger.LogInformation("Executing command:\n{0}", command);
 
                             var sshCommand = sshClient.CreateCommand(command);
-
                             var async = sshCommand.BeginExecute();
 
                             while (!async.IsCompleted)
                             {
                                 Thread.Sleep(TimeSpan.FromSeconds(10));
                             }
-                            _logger.LogInformation("SSH command output:\n{0}",sshCommand.EndExecute(async));
+                            _logger.LogInformation("SSH command output:\n{0}", sshCommand.EndExecute(async));
                             sshClient.Disconnect();
                             if (!autoContinue)
                             {

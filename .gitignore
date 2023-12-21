@@ -365,3 +365,4 @@ FodyWeavers.xsd
 **/*config.json
 **/database.sqlite
 **/launchSettings.json
+**/launch.json

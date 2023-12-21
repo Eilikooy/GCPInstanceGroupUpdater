@@ -41,7 +41,6 @@ namespace SharedLib
                 SourceDisk = $"projects/{project}/zones/{zone}/disks/{sourceImage}",
                 Family = imageFamily,
                 Name = destImageName,
-                 
             }, project).ExecuteAsync();
         }
         public string GetImageStatus(string project, string imageName)

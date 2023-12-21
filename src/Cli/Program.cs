@@ -33,9 +33,9 @@ static void RunOptions(CommandLineArguments opts)
     ConfigureServices(serviceCollection);
     var serviceProvider = serviceCollection.BuildServiceProvider();
     serviceProvider.GetRequiredService<IUpdateManagedInstanceGroup>().ExecuteAsync(
-        opts.FriendlyName, 
-        opts.SshUsername, 
-        opts.SshKeyFile, 
+        opts.FriendlyName.Trim(), 
+        opts.SshUsername.Trim(), 
+        opts.SshKeyFile.Trim(), 
         opts.AutoContinue).Wait();
 }
 static void HandleParseError(IEnumerable<Error> errs)

@@ -1,0 +1,39 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Cli",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "Clibuild",
+            "program": "${workspaceFolder}/src/Cli/bin/Debug/net8.0/Cli.dll",
+            "env": {
+                "GOOGLE_APPLICATION_CREDENTIALS": "sa-file.json"
+            },
+            "args": ["-f Test", "-u username", "-k ssh_key.pem"],
+            "cwd": "${workspaceFolder}/src/Cli",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        },
+        {
+            "name": "WebUi",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "WebUibuild",
+            "program": "${workspaceFolder}/src/WebUi/bin/Debug/net8.0/WebUi.dll",
+            "cwd": "${workspaceFolder}/src/WebUi",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        },
+        {
+            "name": "WorkerService",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "WorkerServicebuild",
+            "program": "${workspaceFolder}/src/WorkerService/bin/Debug/net8.0/WorkerService.dll",
+            "cwd": "${workspaceFolder}/src/WorkerService",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        },
+    ]
+}
