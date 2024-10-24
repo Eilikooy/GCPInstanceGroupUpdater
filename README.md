@@ -52,7 +52,7 @@ Shared code
 ## Requirements
 
 - Authenticated gcloud sdk or service account file. Uses [Application Default Credentials](https://cloud.google.com/docs/authentication/provide-credentials-adc)
-- .Net 7.x (When building)
+- .Net 8.x (When building)
 - One of supported Database
   - MSSQL Server
   - MySQL (WIP)
