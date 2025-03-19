@@ -9,14 +9,14 @@ namespace SharedLib
 
         public Configuration ReadConfiguration()
         {
-            return JsonSerializer.Deserialize<Configuration>(File.ReadAllText("config.json"));
+            return JsonSerializer.Deserialize<Configuration>(File.ReadAllText("config.json")) ?? throw new NullReferenceException();
         }
         public async Task<Configuration> ReadConfigurationAsync()
         {
             try
             {
                 var path = Environment.CurrentDirectory;
-                return JsonSerializer.Deserialize<Configuration>(await File.ReadAllTextAsync("config.json"));
+                return JsonSerializer.Deserialize<Configuration>(await File.ReadAllTextAsync("config.json")) ?? throw new NullReferenceException();
             }
             catch (Exception)
             {
